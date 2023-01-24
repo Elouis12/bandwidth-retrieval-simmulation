@@ -34,6 +34,8 @@ class Server implements Runnable {
 
                 // create a new thread object
                 clientSocket = new ClientHandler(client, bandwidthCache, cacheSemaphore, color);
+
+                // add to the list of clients established
                 clients.add(clientSocket);
 
                 // This thread will handle the client and determine availability of the cache separately

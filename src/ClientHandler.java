@@ -50,10 +50,10 @@ public class ClientHandler implements Runnable {
                 // get permit to access the cache to make a destination look up
                 cacheSemaphore.acquire();
 
-                // get the output stream of client
+                // the output stream of client that will be going out back to the client
                 clientOutput = new PrintWriter( clientSocket.getOutputStream(), true );
 
-                // get the input stream of client
+                // get the input stream of client that was sent over from the client
                 clientInput = new BufferedReader( new InputStreamReader( clientSocket.getInputStream() ) );
 
                 // appends the messages to send to the client about the destination in the cache
@@ -68,6 +68,7 @@ public class ClientHandler implements Runnable {
 
                     throw new Exception();
                 }
+
                 int address = Integer.parseInt( messageFromClient.split(" ")[0] );
                 int timeForRequest = Integer.parseInt( messageFromClient.split(" ")[1] );
 
@@ -76,7 +77,7 @@ public class ClientHandler implements Runnable {
                 System.out.println( this.clientColor + "\tCLIENT @" + this.clientId + this.color.resetColor() + " : Requesting destination " + address );
 
 
-// CASE WHERE THE CACHE HOLDS THE DESTINATION
+// CASE WHERE THE CACHE DOES NOT HOLD THE DESTINATION
                 if( !bandwidthCache.getCache().containsKey( address ) ){
 
                     // release the semaphore so it make a bandwidth calculation
@@ -92,10 +93,13 @@ public class ClientHandler implements Runnable {
                     // once it simulates the ping, get permit to add entry to cache
                     cacheSemaphore.acquire();
 
+                    // prepare message for the client
                     clientMessage.append("\u001B[45m" + "  " + "\u001B[0m" + this.clientColor + " CLIENT " + this.clientId + this.color.resetColor() ).append(threadInfo).append("X ").append(address).append(" ] ");
 
+                    // add the new pinged bandwidth to the cache
                     StringBuilder cacheActionMessage = bandwidthCache.addToCache(address, bandwidth);
 
+                    // prepare message for client
                     clientMessage.append(cacheActionMessage);
                     clientMessage.append( "\n" + this.bandwidthCache.getCache() + "\n"   );
 
