@@ -42,6 +42,8 @@ class Server implements Runnable {
                 Thread clientHandlerThread = new Thread(clientSocket);
                 clientHandlerThread.start();
 
+                // since the run() method in clientHandlerThread has an infinite while loop, this never exits, thus ( for each client, there's 1 clientHandler Thread created )
+
             }
 
         } catch (IOException e) {
